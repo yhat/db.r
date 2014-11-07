@@ -8,7 +8,6 @@ db.db <- setRefClass("db.db",
     tables = "list",
     con = "ANY",
     hostname = "ANY", 
-    filename = "ANY",
     port = "ANY", 
     username = "ANY", 
     password = "ANY",
@@ -67,7 +66,6 @@ db.db <- setRefClass("db.db",
     },
     save_credentials = function(profile="default") {
       creds <- list(
-        filename = filename,
         username = username,
         password = password,
         hostname = hostname,
@@ -80,7 +78,6 @@ db.db <- setRefClass("db.db",
     load_credentials = function(profile="default") {
       f <- paste0("~/.db.r_", profile)
       creds <- rjson::fromJSON(paste(readLines(f), sep=""))
-      filename <<- creds$filename
       username <<- creds$username
       password <<- creds$password
       hostname <<- creds$hostname
@@ -224,7 +221,6 @@ db.table.new <- function(name, db, schema) {
 #'
 #'Returns a structure that helps you query and interact with your database.
 #' 
-#'@param filename filename of a sqlite database (i.e. chinook.sqlite)
 #'@param hostname the hostname for your database (i.e. dw.muppets.com)
 #'@param port the port for your database (i.e. 5432 or 3309)
 #'@param username the username for your database (i.e. kermit)
@@ -244,8 +240,8 @@ db.table.new <- function(name, db, schema) {
 #' db <- db.new(profile="mysql_local")
 #' db$query("select * from foo limit 10;")
 #' }
-db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA, dbtype=NA, filename=NA, profile=NA) {
-  newDB <- db.db$new(hostname=hostname, port=port, username=username, filename=filename,
+db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA, dbtype=NA, profile=NA) {
+  newDB <- db.db$new(hostname=hostname, port=port, username=username, 
                   password=password, dbname=dbname, dbtype=dbtype)
   newDB$init(profile)
 }
@@ -254,7 +250,6 @@ db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA, db
 #'
 #'Returns a structure that helps you query and interact with your database.
 #' 
-#'@param filename filename of a sqlite database (i.e. chinook.sqlite)
 #'@param hostname the hostname for your database (i.e. dw.muppets.com)
 #'@param port the port for your database (i.e. 5432 or 3309)
 #'@param username the username for your database (i.e. kermit)
