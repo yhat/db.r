@@ -29,6 +29,7 @@
 ## TODO
 - [ ] Database Support
     - [x] postgres
+    - [x] redshift
     - [x] mysql
     - [ ] sqlite
     - [ ] mssql
