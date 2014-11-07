@@ -14,3 +14,5 @@ queries.redshift <- loadTemplate("redshift")
 queries.sqlite <- loadTemplate("sqlite")
 #' Queries for Mysql
 queries.mysql <- loadTemplate("mysql")
+
+DemoDB <- DB(filename="/Users/glamp/repos/yhat/opensource/db.r/inst/extdata/chinook.sqlite", dbtype="sqlite")
