@@ -4,7 +4,7 @@
 
 ```r
 > library(devtools)
-> devtools::install_github("yhat", "db.r")
+> devtools::install_github("db.r", "yhat")
 ```
 
 
