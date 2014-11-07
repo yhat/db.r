@@ -24,3 +24,12 @@
 > db$find_table("jok*")
 > db$find_column("*id*")
 ```
+
+
+## TODO
+- [ ] Database Support
+    - [x] postgres
+    - [x] mysql
+    - [ ] sqlite
+    - [ ] mssql
+    - [ ] oracle
