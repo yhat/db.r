@@ -6,7 +6,7 @@ Title: Databases for R
 Authors@R: c(person("Greg", "Lamp", role = c("aut", "cre"),
     email = "greg@yhathq.com")
     )
-Author: Greg Lamp 
+Author: Greg Lamp
 Maintainer: Greg Lamp <greg@yhathq.com>
 Depends:
     R (>= 3.1.0)
@@ -17,10 +17,7 @@ Suggests:
     testthat (>= 0.2),
     RPostgreSQL (>= 0.2.14),
     RMySQL (>= 0.2.14)
-Description: db.r provides a way to interactively explore databases 
+Description: db.r provides a way to interactively explore databases
 License: FreeBSD
 URL: https://github.com/yhat/db.r
 BugReports: https://github.com/yhat/db.r/issues
-Collate:
-    'db.r'
-    'queries.r'
