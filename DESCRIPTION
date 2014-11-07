@@ -12,7 +12,7 @@ Depends:
     R (>= 3.1.0)
 Imports:
     DBI (>= 0.3.1),
-    rjson (>= 0.2.14),
+    rjson (>= 0.2.14)
 Suggests:
     testthat (>= 0.2),
     RPostgreSQL (>= 0.2.14),

@@ -17,19 +17,26 @@ db.db <- setRefClass("db.db",
     query.templates = "ANY"
   ),
   methods = list(
-    init = function() {
+    init = function(profile=NA) {
+      if (! is.na(profile)) {
+        load_credentials(profile)
+      }
       if (dbtype=="postgres") {
+        library(RPostgreSQL)
         drv <- DBI::dbDriver("PostgreSQL")
         port <<- ifnull(port, 5432)
         query.templates <<- queries.pg
       } else if (dbtype=="mysql") {
+        library(RMySQL)
         drv <- DBI::dbDriver("MySQL")
-        port <<- ifnull(port, 3109)
+        port <<- ifnull(port, 3309)
         query.templates <<- queries.mysql
       } else if (dbtype=="sqlite") {
+        library(RSQLite)
         drv <- DBI::dbDriver("SQLite")
         query.templates <<- queries.sqlite
       } else if (dbtype=="redshift") {
+        library(RPostgreSQL)
         drv <- DBI::dbDriver("PostgreSQL")
         port <<- ifnull(port, 5439)
         query.templates <<- queries.redshift
@@ -42,7 +49,7 @@ db.db <- setRefClass("db.db",
       args <- list(drv, user=username, password=password,
            dbname=dbname, host=hostname, port=port)
       suppressWarnings(args[sapply(args, is.na)] <- NULL)
-      con <<- do.call(RPostgreSQL::dbConnect, args)
+      con <<- do.call(DBI::dbConnect, args)
       refresh_schema()
       methods <- getRefClass(class(.self))$methods()
       eval(parse(text=paste(".self$", methods)))
@@ -69,9 +76,20 @@ db.db <- setRefClass("db.db",
       write(rjson::toJSON(creds), paste0("~/.db.r_", profile))
     },
     load_credentials = function(profile="default") {
-      # TODO
+      f <- paste0("~/.db.r_", profile)
+      creds <- rjson::fromJSON(paste(readLines(f), sep=""))
+      username <<- creds$username
+      password <<- creds$password
+      hostname <<- creds$hostname
+      port <<- creds$port
+      dbname <<- creds$dbname
+      dbtype <<- creds$dbtype
     },
     query = function(q) {
+      DBI::dbGetQuery(con, q)
+    },
+    query_from_file = function(filename) {
+      q <- paste(readLines(filename), sep="", collapse="")
       DBI::dbGetQuery(con, q)
     },
     ..dev_query = function(q) {
@@ -189,14 +207,6 @@ db.table <- setRefClass("db.table",
   )
 )
 
-db.new <- function(hostname, port, username, password, dbname, dbtype) {
-  newDB <- DB$new(hostname=hostname, port=port, username=username, 
-                  password=password, dbname=dbname, dbtype=dbtype)
-  newDB$init()
-}
-
-DB <- db.new
-
 db.column.new <- function(name, table_name, db) {
   newColumn <- db.column$new(name=name, table_name=table_name, db=db)
   newColumn$init()
@@ -207,3 +217,56 @@ db.table.new <- function(name, db, schema) {
   newTable$init()
 }
 
+#'Connection to a database
+#'
+#'Returns a structure that helps you query and interact with your database.
+#' 
+#'@param hostname the hostname for your database (i.e. dw.muppets.com)
+#'@param port the port for your database (i.e. 5432 or 3309)
+#'@param username the username for your database (i.e. kermit)
+#'@param password the password for your database (i.e. supersecret)
+#'@param dbname the dbname for your database (i.e. dw, production, staging)
+#'@param dbtype the dbtype for your database (postgres, mysql, sqlite, or redshift)
+#'@param profile the profile for your database (a connection profile)
+#'
+#'@keywords db, object, new
+#'
+#'@export
+#'@examples
+#' \dontrun{
+#' db <- db.new(username="kermit", password="rainbowconnection", hostname="localhost", dbname="muppetdb", dbtype="postgres")
+#' db$save_credentails(profile="muppetdb")
+#'
+#' db <- db.new(profile="mysql_local")
+#' db$query("select * from foo limit 10;")
+#' }
+db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA, dbtype=NA, profile=NA) {
+  newDB <- db.db$new(hostname=hostname, port=port, username=username, 
+                  password=password, dbname=dbname, dbtype=dbtype)
+  newDB$init(profile)
+}
+
+#'Connection to a database
+#'
+#'Returns a structure that helps you query and interact with your database.
+#' 
+#'@param hostname the hostname for your database (i.e. dw.muppets.com)
+#'@param port the port for your database (i.e. 5432 or 3309)
+#'@param username the username for your database (i.e. kermit)
+#'@param password the password for your database (i.e. supersecret)
+#'@param dbname the dbname for your database (i.e. dw, production, staging)
+#'@param dbtype the dbtype for your database (postgres, mysql, sqlite, or redshift)
+#'@param profile the profile for your database (a connection profile)
+#'
+#'@keywords db, object, new
+#'
+#'@export
+#'@examples
+#' \dontrun{
+#' db <-DB(username="kermit", password="rainbowconnection", hostname="localhost", dbname="muppetdb", dbtype="postgres")
+#' db$save_credentails(profile="muppetdb")
+#'
+#' db <-DB(profile="mysql_local")
+#' db$query("select * from foo limit 10;")
+#' }
+DB <- db.new
