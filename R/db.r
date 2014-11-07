@@ -1,9 +1,3 @@
-library(DBI)
-library(RPostgreSQL)
-library(RMySQL)
-library(rjson)
-
-
 # helpers
 ifnull = function(x, v) {
   ifelse(is.na(x), x, v)

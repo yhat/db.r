@@ -1,2 +1,6 @@
 export(DB)
 export(db.new)
+export(queries.pg)
+export(queries.redshift)
+export(queries.sqlite)
+export(queries.mysql)
