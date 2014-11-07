@@ -1,8 +1,6 @@
 # load query templates
 loadTemplate <- function(name) {
-  # filename <- system.file("include", paste0(name, ".json"))
-  # TODO: obviously this doesn't work...
-  filename <- paste("/Users/glamp/repos/yhat/opensource/db.r/inst/extdata", paste0(name, ".json"), sep="/")
+  filename <- paste(system.file(package="db.r"), "extdata", paste0(name, ".json"), sep="/")
   rjson::fromJSON(paste(readLines(filename), collapse=""))
 }
 
