@@ -11,13 +11,12 @@ Maintainer: Greg Lamp <greg@yhathq.com>
 Depends:
     R (>= 3.1.0)
 Imports:
-    DBI
-    rjson
-
+    DBI (>= 0.3.1),
+    rjson (>= 0.2.14),
 Suggests:
-    testthat (>= 0.2)
-    RPostgreSQL
-    RMySQL
+    testthat (>= 0.2),
+    RPostgreSQL (>= 0.2.14),
+    RMySQL (>= 0.2.14)
 Description: db.r provides a way to interactively explore databases 
 License: FreeBSD
 URL: https://github.com/yhat/db.r
