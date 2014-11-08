@@ -12,11 +12,13 @@ Depends:
     R (>= 3.1.0)
 Imports:
     DBI (>= 0.3.1),
-    rjson (>= 0.2.14)
+    rjson (>= 0.2.14),
+    stringr
 Suggests:
     testthat (>= 0.2),
     RPostgreSQL (>= 0.2.14),
-    RMySQL (>= 0.2.14)
+    RMySQL (>= 0.2.14),
+    RSQLite (>= 1.0.0)
 Description: db.r provides a way to interactively explore databases
 License: FreeBSD
 URL: https://github.com/yhat/db.r

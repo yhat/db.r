@@ -11,7 +11,8 @@ db.db <- setRefClass("db.db",
     port = "ANY", 
     username = "ANY", 
     password = "ANY",
-    dbname = "ANY", 
+    dbname = "ANY",
+    filename = "ANY",
     dbtype = "ANY",
     schema = "ANY",
     query.templates = "ANY"
@@ -45,11 +46,16 @@ db.db <- setRefClass("db.db",
       }
       # DBI will "fill up" with connections. it's best to mind
       # your manners and clean up after yourself
-      lapply(DBI::dbListConnections(drv), DBI::dbDisconnect)
-      args <- list(drv, user=username, password=password,
-           dbname=dbname, host=hostname, port=port)
-      suppressWarnings(args[sapply(args, is.na)] <- NULL)
-      con <<- do.call(DBI::dbConnect, args)
+      if (dbtype=="sqlite") {
+        con <<- DBI::dbConnect(drv, filename) 
+        ..create_sqlite_metatable()
+      } else {
+        lapply(DBI::dbListConnections(drv), DBI::dbDisconnect)
+        args <- list(drv, user=username, password=password,
+                     dbname=dbname, host=hostname, port=port)
+        suppressWarnings(args[sapply(args, is.na)] <- NULL)
+        con <<- do.call(DBI::dbConnect, args)
+      }
       refresh_schema()
       methods <- getRefClass(class(.self))$methods()
       eval(parse(text=paste(".self$", methods)))
@@ -109,6 +115,38 @@ db.db <- setRefClass("db.db",
         schema[grep(s, schema$column_name),]
       } else {
         schema[schema$column_name==s & schema$udt_name %in% type,]
+      }
+    },
+    ..create_sqlite_metatable = function() {
+      all.tables <- ..dev_query("select name from sqlite_master where type='table';")
+      all.tables <- lapply(all.tables$name, function(table_name) {
+        result <- DBI::dbGetQuery(con, sprintf("pragma table_info(%s)", table_name)) 
+        result$table_name <- table_name
+        result
+      })
+      if (DBI::dbExistsTable(con, "tmp_dbpy_schema")) {
+        DBI::dbRemoveTable(con, "tmp_dbpy_schema")
+      }
+      DBI::dbSendQuery(con, "create temp table tmp_dbpy_schema(table_name varchar, column_name varchar, data_type varchar);")
+      lapply(all.tables, function(row) {
+        q <- sprintf("insert into tmp_dbpy_schema(table_name, column_name, data_type) values('%s', '%s', '%s');", 
+        row$table_name, row$name, row$type)
+        DBI::dbSendQuery(con, q)
+      })
+
+      if (DBI::dbExistsTable(con, "tmp_dbpy_foreign_keys")) {
+        DBI::dbRemoveTable(con, "tmp_dbpy_foreign_keys")
+      }
+      DBI::dbSendQuery(con, "create temp table tmp_dbpy_foreign_keys(table_name varchar, column_name varchar, foreign_table varchar, foreign_column varchar);")
+      all.sqls <- DBI::dbGetQuery(con, "SELECT name, sql  FROM sqlite_master ;")
+      result <- stringr::str_match_all(all.sqls$sql, "FOREIGN KEY \\(\\[(.*)\\]\\) REFERENCES \\[(.*)\\] \\(\\[(.*)\\]\\)")
+      for(i in 1:length(result)) {
+        r <- result[[i]]
+        if(length(r) > 0) {
+          q <- sprintf("insert into tmp_dbpy_foreign_keys(table_name, column_name, foreign_table, foreign_column) values('%s', '%s', '%s', '%s');",
+            all.sqls$name[i], r[2], r[3], r[4])
+          DBI::dbSendQuery(con, q)
+        }
       }
     },
     refresh_schema = function() {
@@ -240,9 +278,9 @@ db.table.new <- function(name, db, schema) {
 #' db <- db.new(profile="mysql_local")
 #' db$query("select * from foo limit 10;")
 #' }
-db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA, dbtype=NA, profile=NA) {
+db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA, filename=NA, dbtype=NA, profile=NA) {
   newDB <- db.db$new(hostname=hostname, port=port, username=username, 
-                  password=password, dbname=dbname, dbtype=dbtype)
+                  password=password, dbname=dbname, dbtype=dbtype, filename=filename)
   newDB$init(profile)
 }
 
