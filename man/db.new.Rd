@@ -4,7 +4,7 @@
 \title{Connection to a database}
 \usage{
 db.new(hostname = NA, port = NA, username = NA, password = NA,
-  dbname = NA, dbtype = NA, profile = NA)
+  dbname = NA, filename = NA, dbtype = NA, profile = NA)
 }
 \arguments{
 \item{hostname}{the hostname for your database (i.e. dw.muppets.com)}
@@ -14,6 +14,8 @@ db.new(hostname = NA, port = NA, username = NA, password = NA,
 \item{username}{the username for your database (i.e. kermit)}
 
 \item{password}{the password for your database (i.e. supersecret)}
+
+\item{filename}{filepath to SQLite db}
 
 \item{dbname}{the dbname for your database (i.e. dw, production, staging)}
 

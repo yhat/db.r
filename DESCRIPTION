@@ -8,8 +8,6 @@ Authors@R: c(person("Greg", "Lamp", role = c("aut", "cre"),
     )
 Author: Greg Lamp
 Maintainer: Greg Lamp <greg@yhathq.com>
-Depends:
-    R (>= 3.1.0)
 Imports:
     DBI (>= 0.3.1),
     rjson (>= 0.2.14),
