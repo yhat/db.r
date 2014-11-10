@@ -1,9 +1,13 @@
+library(DBI)
+library(methods)
+library(stringr)
+
 # helpers
 ifnull = function(x, v) {
   ifelse(is.na(x), x, v)
 }
 
-db.db <- setRefClass("db.db",
+db.db <- methods::setRefClass("db.db",
   fields = list(
     tables = "list",
     con = "ANY",
@@ -163,7 +167,7 @@ db.db <- setRefClass("db.db",
   )
 )
 
-db.column <- setRefClass("db.column",
+db.column <- methods::setRefClass("db.column",
   fields = list( name = "character", table_name = "character", db = "db.db"),
   methods = list(
     init = function() {
@@ -197,7 +201,7 @@ db.column <- setRefClass("db.column",
 )
 
 
-db.table <- setRefClass("db.table",
+db.table <- methods::setRefClass("db.table",
   fields = list( name = "character", db = "db.db", schema = "ANY", columns = "list", foreign.keys = "data.frame", ref.keys = "data.frame"),
   methods = list(
     init = function() {
