@@ -265,6 +265,7 @@ db.table.new <- function(name, db, schema) {
 #'@param port the port for your database (i.e. 5432 or 3309)
 #'@param username the username for your database (i.e. kermit)
 #'@param password the password for your database (i.e. supersecret)
+#'@param filename filepath to SQLite db 
 #'@param dbname the dbname for your database (i.e. dw, production, staging)
 #'@param dbtype the dbtype for your database (postgres, mysql, sqlite, or redshift)
 #'@param profile the profile for your database (a connection profile)
@@ -294,6 +295,7 @@ db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA, fi
 #'@param port the port for your database (i.e. 5432 or 3309)
 #'@param username the username for your database (i.e. kermit)
 #'@param password the password for your database (i.e. supersecret)
+#'@param filename filepath to SQLite db 
 #'@param dbname the dbname for your database (i.e. dw, production, staging)
 #'@param dbtype the dbtype for your database (postgres, mysql, sqlite, or redshift)
 #'@param profile the profile for your database (a connection profile)
