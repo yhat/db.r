@@ -128,10 +128,13 @@ db.db <- setRefClass("db.db",
         DBI::dbRemoveTable(con, "tmp_dbpy_schema")
       }
       DBI::dbSendQuery(con, "create temp table tmp_dbpy_schema(table_name varchar, column_name varchar, data_type varchar);")
-      lapply(all.tables, function(row) {
-        q <- sprintf("insert into tmp_dbpy_schema(table_name, column_name, data_type) values('%s', '%s', '%s');", 
-        row$table_name, row$name, row$type)
-        DBI::dbSendQuery(con, q)
+      lapply(all.tables, function(rows) {
+        for(i in 1:nrow(rows)) {
+          row <- rows[i,]
+          q <- sprintf("insert into tmp_dbpy_schema(table_name, column_name, data_type) values('%s', '%s', '%s');", 
+              row$table_name, row$name, row$type)
+          DBI::dbSendQuery(con, q)
+        }
       })
 
       if (DBI::dbExistsTable(con, "tmp_dbpy_foreign_keys")) {
@@ -139,7 +142,7 @@ db.db <- setRefClass("db.db",
       }
       DBI::dbSendQuery(con, "create temp table tmp_dbpy_foreign_keys(table_name varchar, column_name varchar, foreign_table varchar, foreign_column varchar);")
       all.sqls <- DBI::dbGetQuery(con, "SELECT name, sql  FROM sqlite_master ;")
-      result <- stringr::str_match_all(all.sqls$sql, "FOREIGN KEY \\(\\[(.*)\\]\\) REFERENCES \\[(.*)\\] \\(\\[(.*)\\]\\)")
+      result <- stringr::str_match_all(all.sqls$sql, "FOREIGN KEY ..([A-Za-z]+).. REFERENCES .([A-Za-z]+). ..([A-Za-z]+)..")
       for(i in 1:length(result)) {
         r <- result[[i]]
         if(length(r) > 0) {
@@ -220,7 +223,6 @@ db.table <- setRefClass("db.table",
       })
       schema$foreign.keys <<- foreign.key.str
       schema$ref.keys <<- ref.key.str
-      print(schema)
     },
     string = function() {
       sprintf("Table <%s>", name)
