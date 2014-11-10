@@ -31,6 +31,6 @@
     - [x] postgres
     - [x] redshift
     - [x] mysql
-    - [ ] sqlite
+    - [x] sqlite
     - [ ] mssql
     - [ ] oracle
