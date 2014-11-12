@@ -169,9 +169,7 @@ db.db <- methods::setRefClass("db.db",
       'Updates and adds/removes any new/old tables/columns from the schema'
       schema <<- DBI::dbGetQuery(con, query.templates$system$schema_no_system)
       all.tables <- unique(schema$table_name)
-      print(all.tables)
       for (tname in all.tables) {
-        print(tname)
         schema.table <- subset(schema, table_name==tname)
         tbl <- db.table.new(tname, .self, schema.table)
         tables[tname] <<- tbl
