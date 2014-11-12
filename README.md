@@ -25,7 +25,6 @@
 > db$find_column("*id*")
 ```
 
-
 ## TODO
 - [ ] Database Support
     - [x] postgres

@@ -2,7 +2,8 @@ library(rjson)
 
 # load query templates
 loadTemplate <- function(name) {
-  filename <- paste(system.file(package="db.r"), "extdata", paste0(name, ".json"), sep="/")
+  filename <- paste(system.file(package="db.r"), "extdata",
+                    paste0(name, ".json"), sep="/")
   rjson::fromJSON(paste(readLines(filename), collapse=""))
 }
 

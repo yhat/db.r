@@ -27,6 +27,16 @@ db.new(hostname = NA, port = NA, username = NA, password = NA,
 Returns a structure that helps you query and interact with your database.
 }
 \examples{
+db <- DemoDB()
+db$query("select * from Artist;")
+db$tables
+db$tables$Artist
+db$tables$Artist$head()
+db$tables$Artist$all()
+db$tables$Artist$sample()
+db$query("select * from Artist;")
+db$find_table("A*")
+db$find_column("*Id*")
 \dontrun{
 db <- db.new(username="kermit", password="rainbowconnection", hostname="localhost", dbname="muppetdb", dbtype="postgres")
 db$save_credentails(profile="muppetdb")

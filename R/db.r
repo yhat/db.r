@@ -7,6 +7,7 @@ ifnull = function(x, v) {
   ifelse(is.na(x), x, v)
 }
 
+
 db.db <- methods::setRefClass("db.db",
   fields = list(
     tables = "list",
@@ -48,12 +49,12 @@ db.db <- methods::setRefClass("db.db",
       } else {
         stop(sprintf("Database %s not implemented!", dbtype))
       }
-      # DBI will "fill up" with connections. it's best to mind
-      # your manners and clean up after yourself
       if (dbtype=="sqlite") {
         con <<- DBI::dbConnect(drv, filename) 
         ..create_sqlite_metatable()
       } else {
+        # DBI will "fill up" with connections. it's best to mind
+        # your manners and clean up after yourself
         lapply(DBI::dbListConnections(drv), DBI::dbDisconnect)
         args <- list(drv, user=username, password=password,
                      dbname=dbname, host=hostname, port=port)
@@ -75,6 +76,8 @@ db.db <- methods::setRefClass("db.db",
         dbtype, hostname, port, username, dbname)
     },
     save_credentials = function(profile="default") {
+      'Save your credentials. You can specify a database profile in the event
+      that you\'re using more than 1 database'
       creds <- list(
         username = username,
         password = password,
@@ -86,6 +89,7 @@ db.db <- methods::setRefClass("db.db",
       write(rjson::toJSON(creds), paste0("~/.db.r_", profile))
     },
     load_credentials = function(profile="default") {
+      'Load saved credentials. You can specify a database profile to load from'
       f <- paste0("~/.db.r_", profile)
       creds <- rjson::fromJSON(paste(readLines(f), sep=""))
       username <<- creds$username
@@ -96,9 +100,11 @@ db.db <- methods::setRefClass("db.db",
       dbtype <<- creds$dbtype
     },
     query = function(q) {
+      'Execute a query (q) on your database.'
       DBI::dbGetQuery(con, q)
     },
     query_from_file = function(filename) {
+      'Execute a query from a file (filename) on your database.'
       q <- paste(readLines(filename), sep="", collapse="")
       DBI::dbGetQuery(con, q)
     },
@@ -110,11 +116,14 @@ db.db <- methods::setRefClass("db.db",
       df
     },
     find_table = function(s) {
+      'Search for a table in your database with a query string `s`'
       # make into a regex or glob
       idx <- grep(s, names(tables))
       tables[idx]
     },
     find_column = function(s, type=NA) {
+      'Search for a column in your database with a query string `s`. You can 
+      optionally specify datatypes to filter by.'
       if (is.na(type)) {
         schema[grep(s, schema$column_name),]
       } else {
@@ -157,6 +166,7 @@ db.db <- methods::setRefClass("db.db",
       }
     },
     refresh_schema = function() {
+      'Updates and adds/removes any new/old tables/columns from the schema'
       schema <<- DBI::dbGetQuery(con, query.templates$system$schema_no_system)
       for (tname in unique(schema$table_name)) {
         schema.table <- subset(schema, table_name==tname)
@@ -176,9 +186,11 @@ db.column <- methods::setRefClass("db.column",
       .self
     },
     show = function() {
+      'representation of the column'
       cat(paste(string(), "\n", sep=""))
     },
     string = function() {
+      'string representation of the column'
       sprintf("Column <%s>", name)
     },
     head = function(n=10) {
@@ -186,14 +198,17 @@ db.column <- methods::setRefClass("db.column",
       db$..dev_query(q)
     },
     all = function() {
+      'returns all records for column'
       q <- sprintf(db$query.templates$column$all, name, table_name)
       db$..dev_query(q)
     },
     sample = function(n=10) {
+      'returns a random sample of N records'
       q <- sprintf(db$query.templates$column$sample, name, table_name, n)
       db$..dev_query(q)
     },
     unique = function() {
+      'returns all unique instances of the column'
       q <- sprintf(db$query.templates$column$unique, name, table_name)
       db$..dev_query(q)
     }
@@ -205,6 +220,7 @@ db.table <- methods::setRefClass("db.table",
   fields = list( name = "character", db = "db.db", schema = "ANY", columns = "list", foreign.keys = "data.frame", ref.keys = "data.frame"),
   methods = list(
     init = function() {
+      row.names(schema) <<- 1:nrow(schema)
       for(column in unique(schema$column_name)) {
         columns[column] <<- db.column.new(name=column, table_name=name, db=db)
       }
@@ -217,6 +233,7 @@ db.table <- methods::setRefClass("db.table",
       .self
     },
     show = function() {
+      'visual representation of the table'
       foreign.key.str <- sapply(names(columns), function(col) {
         t0 <- foreign.keys[foreign.keys$column_name==col,]
         paste(t0$foreign_table_name, t0$foreign_column_name, sep=".", collapse=",")
@@ -227,25 +244,39 @@ db.table <- methods::setRefClass("db.table",
       })
       schema$foreign.keys <<- foreign.key.str
       schema$ref.keys <<- ref.key.str
+      print(schema)
     },
     string = function() {
+      'string epresentation of the table'
       sprintf("Table <%s>", name)
     },
-    head = function(n=10) {
+    head = function(n=6) {
+      'returns the first N rows of the table'
       q <- sprintf(db$query.templates$table$head, name, n)
       db$..dev_query(q)
     },
     all = function() {
+      'returns all the rows in the table'
       q <- sprintf(db$query.templates$table$all, name)
       db$..dev_query(q)
     },
     sample = function(n=10) {
+      'returns a random sample of N rows in the table'
       q <- sprintf(db$query.templates$table$sample, name, n)
       db$..dev_query(q)
     },
-    select = function(...) {
+    unique = function(...) {
+      'returns all unique instance of specified columns in the table'
       cols <- c(...)
-      q <- sprintf(db$query.templates$table$select, cols)
+      cols <- paste(cols, collapse=", ")
+      q <- sprintf(db$query.templates$table$unique, cols, name)
+      db$..dev_query(q)
+    },
+    select = function(...) {
+      'returns all rows from the table with the specified columns'
+      cols <- c(...)
+      cols <- paste(cols, collapse=", ")
+      q <- sprintf(db$query.templates$table$select, cols, name)
       db$..dev_query(q)
     }
   )
@@ -278,6 +309,16 @@ db.table.new <- function(name, db, schema) {
 #'
 #'@export
 #'@examples
+#' db <- DemoDB()
+#' db$query("select * from Artist;")
+#' db$tables
+#' db$tables$Artist
+#' db$tables$Artist$head()
+#' db$tables$Artist$all()
+#' db$tables$Artist$sample()
+#' db$query("select * from Artist;")
+#' db$find_table("A*")
+#' db$find_column("*Id*")
 #' \dontrun{
 #' db <- db.new(username="kermit", password="rainbowconnection", hostname="localhost", dbname="muppetdb", dbtype="postgres")
 #' db$save_credentails(profile="muppetdb")
@@ -287,7 +328,8 @@ db.table.new <- function(name, db, schema) {
 #' }
 db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA, filename=NA, dbtype=NA, profile=NA) {
   newDB <- db.db$new(hostname=hostname, port=port, username=username, 
-                  password=password, dbname=dbname, dbtype=dbtype, filename=filename)
+                     password=password, dbname=dbname, dbtype=dbtype,
+                     filename=filename)
   newDB$init(profile)
 }
 
@@ -308,6 +350,16 @@ db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA, fi
 #'
 #'@export
 #'@examples
+#' db <- DemoDB()
+#' db$query("select * from Artist;")
+#' db$tables
+#' db$tables$Artist
+#' db$tables$Artist$head()
+#' db$tables$Artist$all()
+#' db$tables$Artist$sample()
+#' db$query("select * from Artist;")
+#' db$find_table("A*")
+#' db$find_column("*Id*")
 #' \dontrun{
 #' db <-DB(username="kermit", password="rainbowconnection", hostname="localhost", dbname="muppetdb", dbtype="postgres")
 #' db$save_credentails(profile="muppetdb")
@@ -316,3 +368,19 @@ db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA, fi
 #' db$query("select * from foo limit 10;")
 #' }
 DB <- db.new
+
+#'Demo database for testing and examples.
+#' 
+#'Psuedo-function that returns an example database. We're using the Chinook  
+#'database which is a commonly used example database.
+#' 
+#'@export 
+#'@examples 
+#'db <- DemoDB() 
+#'db$query("select * from Artist;") 
+#'db$tables
+DemoDB <- function() {
+  file.chinook <- paste(system.file(package="db.r"), "extdata", "chinook.sqlite",
+                        sep="/")
+  db.new(filename = file.chinook, dbtype="sqlite")
+}
