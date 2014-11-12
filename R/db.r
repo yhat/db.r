@@ -168,7 +168,10 @@ db.db <- methods::setRefClass("db.db",
     refresh_schema = function() {
       'Updates and adds/removes any new/old tables/columns from the schema'
       schema <<- DBI::dbGetQuery(con, query.templates$system$schema_no_system)
-      for (tname in unique(schema$table_name)) {
+      all.tables <- unique(schema$table_name)
+      print(all.tables)
+      for (tname in all.tables) {
+        print(tname)
         schema.table <- subset(schema, table_name==tname)
         tbl <- db.table.new(tname, .self, schema.table)
         tables[tname] <<- tbl
@@ -217,12 +220,12 @@ db.column <- methods::setRefClass("db.column",
 
 
 db.table <- methods::setRefClass("db.table",
-  fields = list( name = "character", db = "db.db", schema = "ANY", columns = "list", foreign.keys = "data.frame", ref.keys = "data.frame"),
+  fields = list( name = "ANY", db = "db.db", schema = "ANY", columns = "list", foreign.keys = "data.frame", ref.keys = "data.frame"),
   methods = list(
     init = function() {
       row.names(schema) <<- 1:nrow(schema)
-      for(column in unique(schema$column_name)) {
-        columns[column] <<- db.column.new(name=column, table_name=name, db=db)
+      for(colname in schema$column_name) {
+        columns[colname] <<- db.column.new(name=colname, table_name=name, db=db)
       }
       foreign.keys <<- db$..dev_query(sprintf(db$query.templates$system$foreign_keys_for_table, name))
       ref.keys <<- db$..dev_query(sprintf(db$query.templates$system$ref_keys_for_table, name))
@@ -288,6 +291,9 @@ db.column.new <- function(name, table_name, db) {
 }
 
 db.table.new <- function(name, db, schema) {
+  print(name)
+  print(db)
+  print(schema)
   newTable <- db.table$new(name=name, db=db, schema=schema)
   newTable$init()
 }
