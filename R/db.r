@@ -245,6 +245,7 @@ db.table <- methods::setRefClass("db.table",
       })
       schema$foreign.keys <<- foreign.key.str
       schema$ref.keys <<- ref.key.str
+      # TODO: this can be a bit much...
       print(schema)
     },
     string = function() {
@@ -289,9 +290,6 @@ db.column.new <- function(name, table_name, db) {
 }
 
 db.table.new <- function(name, db, schema) {
-  print(name)
-  print(db)
-  print(schema)
   newTable <- db.table$new(name=name, db=db, schema=schema)
   newTable$init()
 }
