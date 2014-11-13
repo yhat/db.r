@@ -11,7 +11,7 @@ You'll probably need one or many of these
 > devtools::install_url("http://cran.r-project.org/src/contrib/RSQLite_1.0.0.tar.gz")
 > devtools::install_url("http://cran.r-project.org/src/contrib/RMySQL_0.9-3.tar.gz")
 # not sure why but Postgres needs to be downloaded manually
-http://cran.r-project.org/src/contrib/RPostgreSQL_0.4.tar.gz")
+# http://cran.r-project.org/src/contrib/RPostgreSQL_0.4.tar.gz
 # unzip, then
 > devtools::install("/path/to/RPostgreSQL_0.4")
 ```
