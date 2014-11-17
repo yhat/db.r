@@ -322,13 +322,15 @@ db.table.new <- function(name, db, schema) {
 #' db$find_table("A*")
 #' db$find_column("*Id*")
 #' \dontrun{
-#' db <- db.new(username="kermit", password="rainbowconnection", hostname="localhost", dbname="muppetdb", dbtype="postgres")
+#' db <- db.new(username="kermit", password="rainbowconnection", 
+#" hostname="localhost", dbname="muppetdb", dbtype="postgres")
 #' db$save_credentails(profile="muppetdb")
 #'
 #' db <- db.new(profile="mysql_local")
 #' db$query("select * from foo limit 10;")
 #' }
-db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA, filename=NA, dbtype=NA, profile=NA) {
+db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA,
+                   filename=NA, dbtype=NA, profile=NA) {
   newDB <- db.db$new(hostname=hostname, port=port, username=username, 
                      password=password, dbname=dbname, dbtype=dbtype,
                      filename=filename)
@@ -363,7 +365,8 @@ db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA, fi
 #' db$find_table("A*")
 #' db$find_column("*Id*")
 #' \dontrun{
-#' db <-DB(username="kermit", password="rainbowconnection", hostname="localhost", dbname="muppetdb", dbtype="postgres")
+#' db <-DB(username="kermit", password="rainbowconnection", 
+#' hostname="localhost", dbname="muppetdb", dbtype="postgres")
 #' db$save_credentails(profile="muppetdb")
 #'
 #' db <-DB(profile="mysql_local")
