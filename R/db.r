@@ -323,7 +323,7 @@ db.table.new <- function(name, db, schema) {
 #' db$find_column("*Id*")
 #' \dontrun{
 #' db <- db.new(username="kermit", password="rainbowconnection", 
-#" hostname="localhost", dbname="muppetdb", dbtype="postgres")
+#"  hostname="localhost", dbname="muppetdb", dbtype="postgres")
 #' db$save_credentails(profile="muppetdb")
 #'
 #' db <- db.new(profile="mysql_local")
@@ -366,7 +366,7 @@ db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA,
 #' db$find_column("*Id*")
 #' \dontrun{
 #' db <-DB(username="kermit", password="rainbowconnection", 
-#' hostname="localhost", dbname="muppetdb", dbtype="postgres")
+#'  hostname="localhost", dbname="muppetdb", dbtype="postgres")
 #' db$save_credentails(profile="muppetdb")
 #'
 #' db <-DB(profile="mysql_local")

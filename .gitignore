@@ -6,3 +6,5 @@
 .Rproj.user
 ..Rcheck
 *.tar.gz
+db.r.Rcheck
+*.swp
