@@ -40,7 +40,7 @@ Greg Lamp <greg@yhathq.com>
   \tabular{ll}{
 	Package: \tab \code{db.r}\cr
 	Type: \tab Package\cr
-	Version: \tab 0.1\cr
+	Version: \tab 0.1.1\cr
 	Date: \tab 2014-11-17\cr
 	License: \tab FreeBSD\cr
 	}
