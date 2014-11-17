@@ -20,9 +20,7 @@ Suggests:
     RPostgreSQL (>= 0.2.14),
     RMySQL (>= 0.2.14),
     RSQLite (>= 1.0.0)
-Description: db.r provides a way to interactively explore databases in R. It 
-uses the Reference classes to create Python/Ruby/Javascript-esque objects in R
-that dynamically load database schemas, execute queries, and manage credentials.
+Description: db.r provides a way to interactively explore databases in R. It uses the Reference classes to create Python/Ruby/Javascript-esque objects in R that dynamically load database schemas, execute queries, and manage credentials.
 License: FreeBSD
 URL: https://github.com/yhat/db.r
 BugReports: https://github.com/yhat/db.r/issues
