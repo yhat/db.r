@@ -2,7 +2,7 @@ Package: db.r
 Type: Package
 Version: 0.1.1
 Date: 2014-11-17
-Title: Explore databases interactively using the R shell
+Title: A database exploration tool with assisted querying and schema exploration
 Author: Greg Lamp
 Maintainer: Greg Lamp <greg@yhathq.com> 
 Depends:
@@ -18,9 +18,10 @@ Suggests:
     RMySQL (>= 0.2.14),
     RSQLite (>= 1.0.0)
 Description: db.r provides a way to interactively explore databases in R. It
-    uses the Reference classes to create Python/Ruby/Javascript-esque objects
-    in R that dynamically load database schemas, execute queries, and manage
-    credentials.
+    uses the OOP style objects (akin to C++, Python, Ruby, Javascript, etc.) to 
+    help make visualizing the tables, columns, and available operations on your
+    database easier. db.r dynamically loads database schemas, execute queries,
+    and manage credentials.
 License: FreeBSD
 URL: https://github.com/yhat/db.r
 BugReports: https://github.com/yhat/db.r/issues
