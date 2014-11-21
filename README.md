@@ -1,10 +1,14 @@
 # db.r
 
 ## Installation
-
+On CRAN
+```r
+> install.packages("db.r")
+```
+Using `devtools`
 ```r
 > library(devtools)
-> devtools::install_github("db.r", "yhat")
+> devtools::install_github("yhat/db.r")
 ```
 You'll probably need one or many of these
 ```r
