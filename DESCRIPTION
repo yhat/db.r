@@ -1,6 +1,6 @@
 Package: db.r
 Type: Package
-Version: 0.1.0
+Version: 0.1.1
 Date: 2014-11-17
 Title: A Database Exploration Tool with Assisted Querying and Schema Exploration
 Author: Greg Lamp
@@ -11,12 +11,12 @@ Depends:
 Imports:
     DBI,
     rjson (>= 0.2.14),
+    RSQLite (>= 1.0.0),
     stringr
 Suggests:
     testthat (>= 0.2),
     RPostgreSQL (>= 0.2.14),
     RMySQL (>= 0.2.14),
-    RSQLite (>= 1.0.0)
 Description: db.r uses OOP style objects (with an API akin to C++, Python, Ruby,
     Javascript, etc.) to help make visualizing the tables, columns, and 
     available operations on your database easier. db.r dynamically loads 
