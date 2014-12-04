@@ -1,5 +1,5 @@
 # db.r
-*Warning: There is a bug when using `db.r` in RStudio. We are working on resolving the issue!*
+*Warning: There is a bug when using `db.r` in RStudio. We are working on resolving the [issue](https://github.com/yhat/db.r/issues/2)!*
 
 ## Installation
 On CRAN
