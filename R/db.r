@@ -332,7 +332,7 @@ db.table.new <- function(name, db, schema) {
 #' }
 db.new <- function(hostname=NA, port=NA, username=NA, password=NA, dbname=NA,
                    filename=NA, dbtype=NA, profile=NA) {
-  warning("This version of db.r is not compatible with RStudio. Please see https://github.com/yhat/db.r/issues/2 for more details.")
+  message("This version of db.r is not compatible with RStudio. Please see https://github.com/yhat/db.r/issues/2 for more details.")
   newDB <- db.db$new(hostname=hostname, port=port, username=username, 
                      password=password, dbname=dbname, dbtype=dbtype,
                      filename=filename)
